@@ -67,6 +67,8 @@ catkin_create_pkg [package_name] [depend1] [depend2] [...]
 # 程序包编译
 cd ~/catkin_ws
 catkin_make
+
+catkin_make --pkg [package_name]	# 单独编译一个包
 ~~~
 
 ## 1.5 ROS节点、话题、服务
@@ -131,6 +133,10 @@ rosparam set [param_name] [data] 	# 设置参数
 
 rosparam get [param_name] 		# 获取参数
 
+rosparam dump [filename(.yaml)]		# 保存参数
+
+rosparam load [filename(.yaml)]		# 加载参数
+
 ~~~
 
 
@@ -145,5 +151,60 @@ rosparam get [param_name] 		# 获取参数
 
 **具体使用看官网[wiki](http://wiki.ros.org/cn/ROS/Tutorials/CreatingMsgAndSrv)**
 
+## 1.7 ROS话题（topic）和服务（service）的区别
+
+|  |Topic|Service|
+|---|---|---|
+|**通信方式**|异步通信|同步通信|
+|**通信模型**|Publisher--Subscriber(多对多)|Client--Server(多对一)|
+|**通信数据格式**|msg|srv|
+|**比喻**|A发朋友圈，B刷朋友圈的时候看到了，朋友圈就是话题|A打电话给B，B接通了并回复|
+|**应用**|连续高频数据发送与接收，如激光雷达|偶尔调用或具体功能：拍照|
+
+
+## 1.8 ROS launch文件的使用
+
++ launch文件通过XML文件实现多节点的配置和启动，根目录采用<launch>标签定义
+
+~~~xml
+ <launch>
+
+    <!-- Turtlesim Node-->
+    <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
+    <node pkg="turtlesim" type="turtle_teleop_key" name="teleop" output="screen"/>
+
+    <node pkg="learning_tf" type="turtle_tf_broadcaster" args="/turtle1" 
+    name="turtle1_tf_broadcaster" />
+    <node pkg="learning_tf" type="turtle_tf_broadcaster" args="/turtle2" 
+    name="turtle2_tf_broadcaster" />
+
+    <node pkg="learning_tf" type="turtle_tf_listener" name="listener" />
+
+  </launch>
+~~~
+
++ launch文件语法
+
+~~~xml
+<!--启动节点-->
+<node pkg="package_name" type="executable_name" name="node_name" />
+<!--后面可再加 output, respawn, required, ns, args 参数-->
+
+<!--设置参数，存储在参数服务器中-->
+<param name="param_name" value="param_value" />
+
+<!--加载参数文件-->
+<rosparam file="params.yaml" command="load" ns="params" />
+
+<!--launch文件中的局部变量-->
+<arg name="arg-name" default="arg-value" />
+
+<!--重映射资源命名-->
+<remap from="old_name" to="new_name" />
+
+<!--launch 文件嵌套-->
+<include file="$(dirname)/other.launch" />
+
+~~~
 
 
