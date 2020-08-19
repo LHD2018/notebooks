@@ -207,4 +207,23 @@ rosparam load [filename(.yaml)]		# 加载参数
 
 ~~~
 
+## 1.9 可视化工具
+
+~~~bash
+
+rqt 			# qt工具包
+
+rqt_console		# 日志工具
+
+rqt_graph 		# 节点通讯查看工具
+
+rqt_plot		# 数据绘图工具
+
+rqt_image_view	# 图像渲染工具
+
+rviz			# 三维可视化工具
+
+roslaunch  gazebo_ros [*.launch]	# 三维仿真
+
+~~~
 
