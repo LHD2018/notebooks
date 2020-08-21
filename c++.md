@@ -1,4 +1,4 @@
-前言
+#前言
 
 +  ***之前学`c++`完全是学到哪算哪，从来没有系统性学过，现在重新开始。有些重点借此记录下来，希望能坚持下来，有所收获。***
 
@@ -95,6 +95,48 @@
 
 
 ## 3.结构体
+
+### 3.1 C 中结构体定义
+~~~c
+typedef struct student_tag{
+	string name;
+	int age;
+}Student;
+
+// 两种使用方式
+Student s1;
+struct student_tag s2;
+~~~
+
++ student_tag 是标识符,可以不写，即如下定义
+~~~c
+typedef struct {
+	string name;
+	int age;
+}Student;
+
+// 使用方式
+Student s1;
+~~~
+
+### 3.2 C++ 中结构体定义
+
+~~~c++
+struct Student{
+	string name;
+	int age
+};
+
+// 使用
+Student s1;
+
+struct Student{
+	string name;
+	int age
+}s2;	// s2 是一个变量
+~~~
+
+
 
 
 
@@ -319,36 +361,127 @@ public:
 > > 
 
 
-#### 8.2.1 容器
-+ vector容器
+### 8.3 容器
+
+#### 8.3.1 vector容器
 ~~~c++
 vector<int> v;
-v.push_back(10);
+v.push_back(elem);
 v.pop_back();
 vector<int>::iterator it = v.begin();
 v.reserve(1000);	//预留空间
 v.insert(v.begin(), 10);
 ~~~
 
-+ deque 容器
+#### 8.3.2 deque 容器
   支持前插和后插，内部通过中控器维护
 ~~~c++
 deque<int> d;
-d.push_front(10);
+d.push_front(elem);		//前插
 d.pop_front();
-d.push_back(10);
+d.push_back(elem);		//尾插
 d.pop_back();
 ~~~
 
-+ stack 容器
+#### 8.3.4 stack 容器
   先进后出，不能进行遍历
 ~~~c++
 stack<int> s;
 s.empty();
 s.size();
-s.push();
+s.push(elem);
 s.pop();
 s.top();
 ~~~
-+ queue 容器
-  
+#### 8.3.5 queue 容器
+
+  先进先出，不能进行遍历
+
+  ~~~C++
+queue<int> q;
+q.push(elem);
+q.pop();
+q.back();
+q.front();
+q.empty();
+q.size();
+  ~~~
+
+#### 8.3.6 list 容器
+
++ 链表（list）由一系列结点构成，节点由存储数据的**数据域**，和存放下一个结点指针的**指针域**组成。
++ STL 中链表是一个双向循环链表。
+
++ 常用函数
+~~~c++
+// 构造函数与其他容器一样
+
+list<int> data;
+
+data.push_back(elem);		//尾插
+data.pop_back();
+data.push_front(elem);		//前插
+data.pop_front();
+data.insert(iterator, elem);
+
+data.erase(iterator);
+data.erase(beg_iterator, end_iterator);
+data.remove(elem);
+
+data.clear();
+
+data.front();
+data.back();
+
+data.reverse();
+data.sort();		//自定义数据类型排序需要指定规则
+
+~~~
+
+
+#### 8.3.7 set和multiset 容器
+
++ 常用函数
+~~~c++
+set<int> data;
+data.insert(elem);
+
+data.erase(iterator);
+data.erase(beg_iterator, end_iterator);
+data.erase(elem);
+data.clear();
+
+data.find(elem);	//查找，若存在返回元素迭代器
+data.count(elem);	// 统计元素个数
+~~~
+
++ set和multiset 的异同点
+>   二者在插入时都会进行排序，所有函数相同
+>   set不能插入重复元素，multiset可以插入重复元素
+
+#### 8.3.8 map和multimap 容器
+
++ map中所有元素都是pair
++ pair由键值对组成
++ 所有元素会根据键值自动排序
++ map不能插入重复元素，multimap 可以
+
++ 常用函数
+~~~c++
+map<int, int> data;
+
+data.insert(make_pair(key, value));
+data.insert(pair<int, int>(key, value);
+
+data.erase(iterator)				//返回下一个元素的迭代器
+data.erase(beg_iterator, end_iterator)	//返回下一个元素的迭代器
+data.erase(key);
+data.clear();
+
+data.find(key);		//存在返回元素迭代器， 不存在返回data.end();
+data.count(key);	//统计元素个数
+
+~~~
+
+
+
