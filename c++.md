@@ -478,8 +478,113 @@ data.erase(beg_iterator, end_iterator)	//返回下一个元素的迭代器
 data.erase(key);
 data.clear();
 
-data.find(key);		//存在返回元素迭代器， 不存在返回data.end();
+data.find(key);		//存在返回元素迭代器， 不存在返回data.end()
 data.count(key);	//统计元素个数
+
+~~~
+
+
+
+### 8.4 仿函数（函数对象）
+
+#### 8.4.1 仿函数概念
+
++ 仿函数重载的操作符`()`，调用的时候看起来像函数，但它的本质是一个类。
+
++ 特点
++ - 仿函数可以像普通函数一样调用，可以有参数和返回值
++ - 仿函数超出了普通函数的概念，可以有自己的状态
++ - 仿函数对象可以作为参数传递
+
+#### 8.4.2 谓词
+
++ 谓词：仿函数返回值类型是bool
++ - 一元谓词：仿函数一个参数
++ - 二元谓词：仿函数两个参数
+
+#### 8.4.3 内建函数对象
+
++ 需要包含`functional`头文件
+
++ 算数仿函数
++ - negate（取反）
++ - plus（加）
+
++ 关系仿函数
++ - equal_to（等于）
++ - greater（大于）
++ - less（小于）
+
++ 逻辑仿函数
++ - logical_not （逻辑非）
+
+
+### 8.5 算法
+
+***包含头文件`algorathm`***
+
++ 遍历算法
+~~~c++
+for_each(iterator_beg, iterator_end, _func);		// _func 可传函数或仿函数对象
+
+transform(iterator_beg, iterator_end, dst_iterator_begin, _func); 	// 目标容器需要提前开辟空间_func 可传函数或仿函数对象
+~~~
+
++ 查找算法
+~~~c++
+find(iterator_beg, iterator_end);		//存在返回元素迭代器， 不存在返回data.end()
+
+find_if(iterator_beg, iterator_end, _pred);	 	//_pred是条件，是谓词
+
+adjacent_find(iterator_beg, iterator_end);		// 查找相邻重复元素，返回第一个元素迭代器
+
+binary_search(iterator_beg, iterator_end, value);	// 查找有序序列，返回bool
+
+count(iterator_beg, iterator_end, value);		// 统计元素出现个数
+
+count_if(iterator_beg, iterator_end, _pred);	// 按谓词统计个数
+~~~
+
++ 排序算法
+~~~c++
+sort(iterator_beg, iterator_end, _pred);
+
+random_shuffle(iterator_beg, iterator_end); 	// 乱序
+
+merge(iterator1_beg, iterator1_end, iterator2_beg, iterator2_end, dst_iterator_beg)	// 合并两个容器到一个容器， 目标容器需要提前开辟空间
+
+reverse(iterator_beg, iterator_end);	// 反序
+
+~~~
+
++ 拷贝替换算法
+~~~c++
+copy(iterator_beg, iterator_end, dst_iterator_beg);	// 目标容器需要提前开辟空间
+
+replace(iterator_beg, iterator_end, old_value, new_value);
+
+replace(iterator_beg, iterator_end, _pred, new_value); // 将满足谓词条件的替换
+
+swap(container_1, container_2);
+~~~
+
+***包含头文件`numeric`***
+
++ 数算生成算法
+~~~c++
+accumulate(iterator_beg, iterator_end, beg_value); 	// 将容器元素从起始值累加
+
+fill(iterator_beg, iterator_end, value) 		// 向容器填充值
+
+~~~
+
++ 集合算法
+~~~c++
+set_intersection(iterator1_beg, iterator1_end, iterator2_beg, iterator2_end, dst_iterator_beg); // 求两个容器的交集，两个容器必须是有序序列
+
+set_union(iterator1_beg, iterator1_end, iterator2_beg, iterator2_end, dst_iterator_beg); 	// 求两个容器的并集，两个容器必须是有序序列
+
+set_difference(iterator1_beg, iterator1_end, iterator2_beg, iterator2_end, dst_iterator_beg); 	// 求两个容器的差集，两个容器必须是有序序列
 
 ~~~
 
