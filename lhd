@@ -6,8 +6,6 @@ using namespace std;
 
 struct Data
 {
-	int people_num;
-	int actor_num;
 
 	vector<int> people;
 	vector<int> actors;
@@ -42,15 +40,17 @@ int main() {
 	vector<Data> datas;
 	Data data;
 	int temp;
+	int people_num;
+	int actor_num;
 	for (int i = 0; i < nums; i++)
 	{
-		cin >> data.people_num >> data.actor_num;
+		cin >> people_num >> actor_num;
 		
-		for (int j = 0; j < data.people_num; j++) {
+		for (int j = 0; j < people_num; j++) {
 			cin >> temp;
 			data.people.push_back(temp);
 		}
-		for (int k = 0; k< data.actor_num; k++) {
+		for (int k = 0; k< actor_num; k++) {
 			cin >> temp;
 			data.actors.push_back(temp);
 		}
