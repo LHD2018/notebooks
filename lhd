@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Data
+{
+	int people_num;
+	int actor_num;
+
+	vector<int> people;
+	vector<int> actors;
+};
+
+void findResult(Data& data) {
+	int index;
+	bool flag;
+	for (auto i : data.people) {
+		index = 1;
+		flag = false;
+		for(auto j : data.actors){
+			if (i <= j) {
+				cout << index << " ";
+				flag = true;
+				break;
+			}
+			index++;
+		}
+		if (!flag)
+		{
+			cout << -1 << " ";
+		}
+	}
+	cout << endl;
+}
+
+int main() {
+	int nums;
+	cin >> nums;
+
+	vector<Data> datas;
+	Data data;
+	int temp;
+	for (int i = 0; i < nums; i++)
+	{
+		cin >> data.people_num >> data.actor_num;
+		
+		for (int j = 0; j < data.people_num; j++) {
+			cin >> temp;
+			data.people.push_back(temp);
+		}
+		for (int k = 0; k< data.actor_num; k++) {
+			cin >> temp;
+			data.actors.push_back(temp);
+		}
+		datas.push_back(data);
+
+	}
+
+	for (auto k : datas) {
+		findResult(k);
+	}
+	
+	return 0;
+}
