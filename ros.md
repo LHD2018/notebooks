@@ -227,3 +227,17 @@ roslaunch  gazebo_ros [*.launch]	# 三维仿真
 
 ~~~
 
+# 2. 机器视觉
+
+~~~bash
+# 安装opencv功能包
+sudo apt-get install ros-kinetic-vision-opencv libopencv-dev python-opencv
++ openCV与ROS之间的图像转换通过CvBridge()完成，并通过话题发布与订阅。
+
+# 安装二维码功能包
+sudo apt-get install ros-kinetic-ar-track-alvar
+
+# 安装物体识别功能包
+sudo apt-get install ros-kinetic-object-recognition-kitchen-*
+
+~~~
