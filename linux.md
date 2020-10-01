@@ -21,23 +21,64 @@ sudo dpkg -i *.deb
 ~~~
 
 
-## BASH
+## shell
+
+### 入门
+~~~bash
+
+# shell文件后缀名为.sh, 且具有执行权限
+
+#!/bin/bash		# 第一行，表示使用bash
+
+read [-pt] name		# 等待键盘输入并赋给name，p：提示，t：设定等待时间
+
+$(())		# 支持整型运算
+
+test -erwxdf	#测试 e：文件存在为真 r:存在且可读 w：存在且可写 x：存在且可执行 d：存在为目录 f：存在为文件
+
+command1 && command2		# command1执行完毕并正确，执行command2
+command1 || command2		# command1执行完毕不正确，执行command2
+
+$0 ~ $n		# shell的参数，$0为shell本身
+$#			# 最后一个参数的标号
+
+if 判断条件 ; then
+	# do something
+elif 判断条件 ; then
+	# do something
+else
+	# do something
+fi
+
+case $变量 in
+"case1")
+	# do something
+	;;
+“case2”)
+	# do something
+	;;
+esac
+
+
+~~~
 
 ### 变量
 ~~~bash
-name=value	//等号两边都不能有空格，如需要则进行转义
 
-export name 	// 将变量设为环境变量
 
-${name} 	//引用变量
+name=value	# 等号两边都不能有空格，如需要则进行转义
 
-$(command) 	// 在变量中使用命令，但需要在**双引号中**，单引号就是字面文字
+export name 	# 将变量设为环境变量
 
-unset name		// 取消变量
+${name} 	# 引用变量
 
-read [-pt] name		// 等待键盘输入，p：提示，t：设定等待时间
+$(command) 	# 在变量中使用命令，但需要在双引号中，单引号就是字面文字
 
-declare [-aixr] name 	//声明变量，a：数组，i：整形，x：环境变量，r：只读
+unset name		# 取消变量
+
+declare [-aixr] name 	# 声明变量，a：数组，i：整形，x：环境变量，r：只读
+
+
 
 
 ~~~
