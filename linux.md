@@ -61,6 +61,7 @@ esac
 
 
 ~~~
+</br>
 
 ### 变量
 ~~~bash
@@ -94,7 +95,7 @@ declare [-aixr] name 	# 声明变量，a：数组，i：整形，x：环境变�
 + 命令后加`&`变成守护进程，使其后台运行
 + `killall <name>` 杀死进程
 + `kill <pid>` 杀死进程，pid可由`ps -ef | grep <name>`获取
-
+</br>
 ### 进程通信
 + 管道（pipe）：无名管道用于父子进程、命名管道无限制
 + 消息队列（message）：进程向队列中添加消息，其他进程读取消息
@@ -107,7 +108,7 @@ declare [-aixr] name 	# 声明变量，a：数组，i：整形，x：环境变�
 + `signal(int signum, sighandler_t handler);`
 + + signum:信号编号 
 + + handler:处理方式，可以是自定义信号处理函数，或忽略`SIG_IGN`, 或默认`SIG_DFL`
-
+</br>
 ***`SIGKILL`(9) 信号无法捕获处理 ***
 
 +代码示例
@@ -135,12 +136,179 @@ int main()
  
   /* code */
 ~~~
-
+</br>
 + 发送信号：`int kill(pid_t pid, int sig)`
 + + pid:要发送的进程id（>0：指定进程id，=0：父子进程发送，二者都收到，=-1：广播给系统所有进程
-+ sig：：准备发送的信号代码，假如其值为零则没有任何信号送出
-+ 返回值：成功返回0， 失败返回-1
++ + sig：：准备发送的信号代码，假如其值为零则没有任何信号送出
++ + 返回值：成功返回0， 失败返回-1
+</br>
 
+
+#### 共享内存
++ 共享内存（Shared Memory）就是允许多个进程访问同一个内存空间，是在多个进程之间共享和传递数据最高效的方式。
+
++ `int shmget(key_t key, size_t size, int shmflg);`获取或创建共享内存
++ + key:共享内存的编号，唯一且通常用16进制表示
++ + size：共享内存大小
++ + shmflg：访问权限，如0666|IPC_CREAT（所有用户可以访问）
++ + 返回值：返回共享内存标识符
+</br>
++ `void *shmat(int shm_id, const void *shm_addr, int shmflg)`;将共享内存连接到当前进程
++ + shm_id:内存的标识符
++ + shm_addr:指定共享内存连接到当前进程中的地址位置，通常为0
++ + shmflg:通常为0
++ + 返回值：一个指向共享内存第一个字节的指针
+</br>
++ `int shmdt(const void *shmaddr);` 将共享内存从当前进程分离
++ + shmaddr: 共享内存第一个字节的指针
++ + 返回值：成功返回0， 失败返回-1
+</br>
++ `int shmctl(int shm_id, int command, struct shmid_ds *buf);` 删除共享内存
++ + shm_id: 共享内存标识符
++ + command：通常为IPC_RMID
++ + buf：通常为0
+</br>
++ 常用命令
+~~~bash
+# 查看共享内存
+ipcs -m
+# 删除共享内存
+ipcrm -m <共享内存编号>
+~~~
+</br>
++ 代码示例
+~~~c ++
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
+using namespace std;
+
+
+int main(){
+
+    int shmid; // 共享内存标识符
+ 
+    // 创建共享内存，键值为0x5005，共1024字节。
+    shmid = shmget((key_t)0x5005, 1024, 0640|IPC_CREAT);
+    
+    char *ptext=0;   // 用于指向共享内存的指针
+    
+    // 将共享内存连接到当前进程的地址空间，由ptext指针指向它
+    ptext = (char *)shmat(shmid, 0, 0);
+    
+    // 把共享内存从当前进程中分离
+    shmdt(ptext);
+    
+    // 删除共享内存
+    shmctl(shmid, IPC_RMID, 0);
+
+    return 0;
+}
+~~~
+</br>
+
+#### 信号量
+
++ 信号量（信号灯）本质上是一个计数器，用于协调多个进程（包括但不限于父子进程）对共享数据对象的读/写。
+
++ 代码示例
+~~~c ++
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+ 
+class CSEM
+{
+private:
+  union semun  // 用于信号灯操作的共同体。
+  {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *arry;
+  };
+ 
+  int  sem_id;  // 信号灯描述符。
+public:
+  bool init(key_t key); // 如果信号灯已存在，获取信号灯；如果信号灯不存在，则创建信号灯并初始化。
+  bool wait();          // 等待信号灯挂出。
+  bool post();          // 挂出信号灯。
+  bool destroy();       // 销毁信号灯。
+};
+ 
+int main(int argc, char *argv[])
+{
+   CSEM sem;
+ 
+   // 初始信号灯。
+   if (sem.init(0x5000)==false) { printf("sem.init failed.\n"); return -1; }
+   printf("sem.init ok\n");
+  
+   // 等待信信号挂出，等待成功后，将持有锁。
+   if (sem.wait()==false) { printf("sem.wait failed.\n"); return -1; }
+   printf("sem.wait ok\n");
+ 
+   sleep(50);  // 在sleep的过程中，运行其它的book259程序将等待锁。
+  
+   // 挂出信号灯，释放锁。
+   if (sem.post()==false) { printf("sem.post failed.\n"); return -1; }
+   printf("sem.post ok\n");
+  
+   // 销毁信号灯。
+   if (sem.destroy()==false) { printf("sem.destroy failed.\n"); return -1; }
+   printf("sem.destroy ok\n");
+}
+ 
+bool CSEM::init(key_t key)
+{
+  // 获取信号灯。
+  if ( (sem_id=semget(key,1,0640)) == -1){
+    // 如果信号灯不存在，创建它。
+    if (errno==2){
+      if ( (sem_id=semget(key,1,0640|IPC_CREAT)) == -1) return false;
+ 
+      // 信号灯创建成功后，还需要把它初始化成可用的状态。
+      union semun sem_union;
+      sem_union.val = 1;
+      if (semctl(sem_id,0,SETVAL,sem_union) <  0) return false;
+    }else return false;
+  }
+ 
+  return true;
+}
+ 
+bool CSEM::destroy()
+{
+  if (semctl(sem_id,0,IPC_RMID) == -1) return false;
+ 
+  return true;
+}
+ 
+bool CSEM::wait()
+{
+  struct sembuf sem_b;
+  sem_b.sem_num = 0;
+  sem_b.sem_op = -1;
+  sem_b.sem_flg = SEM_UNDO;
+  if (semop(sem_id, &sem_b, 1) == -1) return false;
+   
+  return true;
+}
+ 
+bool CSEM::post()
+{
+  struct sembuf sem_b;
+  sem_b.sem_num = 0;
+  sem_b.sem_op = 1;  
+  sem_b.sem_flg = SEM_UNDO;
+  if (semop(sem_id, &sem_b, 1) == -1) return false;
+ 
+  return true;
+}
+~~~
 
 
 ## others
