@@ -311,6 +311,48 @@ bool CSEM::post()
 ~~~
 
 
+## 线程
++ 在同一个进程中，可以运行多个线程，运行于同一个进程中的多个线程，它们彼此之间使用相同的地址空间，共享全局变量和对象，启动一个线程所消耗的资源比启动一个进程所消耗的资源要少。
+
+~~~bash
+# 查看线程
+top -H
+ps -xH
+~~~
+
+
+### 线程创建
++ `int pthread_create(pthread_t *thread, const pthread_attr_t *attr,void *(*start_routine) (void *), void *arg);` 创建线程
++ + thread：指向线程标识符的地址
++ + attr：线程属性，一般为NULL
++ + start_routine：线程执行函数名
++ + arg：线程函数的参数
+
+</br>
+### 结束线程
++ 函数执行完毕，自动消亡
++ 调用`pthread_exit(0)`结束
++ 被主线程或其他线程停止
+
+### 线程资源回收
++ 线程有joinable和unjoinable两种状态，创建线程默认joinable，线程函数执行完后不会释放系统资源，这种线程称为“僵尸线程”。
+
++ 设置线程属性
++ 在开启线程后，在主函数中调用`pthread_detach(pthid);`
++ 在线程函数中调用`pthread_detach(pthread_self());`
+
+
+
 ## others
 + `tail -f <filename>` 实时查看文件
 + `grep <name>` 搜索过滤
+
+### `init`
++ 是由内核启动的第一个用户级进程
++ 0：停机或关机
++ 1：单用户模式，只用root维护
++ 2：多用户模式，不能使用NFS（Net File System）
++ 3:完全多用户模式：标准运行状态
++ 4：安全模式
++ 5：图形界面
++ 6：重启
