@@ -336,11 +336,72 @@ ps -xH
 
 ### 线程资源回收
 + 线程有joinable和unjoinable两种状态，创建线程默认joinable，线程函数执行完后不会释放系统资源，这种线程称为“僵尸线程”。
-
 + 设置线程属性
 + 在开启线程后，在主函数中调用`pthread_detach(pthid);`
 + 在线程函数中调用`pthread_detach(pthread_self());`
 
+### 线程同步
++ 线程的锁的种类有互斥锁、读写锁、条件变量、自旋锁、信号灯。
+
+#### 互斥锁
++ `int pthread_mutex_init(pthread_mutex_t *mutex,const pthread_mutex_attr_t *mutexattr);` // 初始化锁
++ + mutex:锁标识符
++ +mutexattr：锁属性，null为缺省值，**一般就填0**
++ + + PTHREAD_MUTEX_TIMED_NP：普通锁，缺省值。
++ + + PTHREAD_MUTEX_RECURSIVE_NP，嵌套锁，允许同一个线程对同一个锁成功获得多次，并通过多次unlock解锁。
++ + + PTHREAD_MUTEX_ERRORCHECK_NP，检错锁，如果同一个线程请求同一个锁，则返回EDEADLK，否则与PTHREAD_MUTEX_TIMED_NP类型动作相同。
++ + + PTHREAD_MUTEX_ADAPTIVE_NP，适应锁，动作最简单的锁类型，等待解锁后重新竞争。
+
++ `int pthread_mutex_lock(pthread_mutex *mutex);` // 阻塞加锁，如果是锁是空闲状态，本线程将获得这个锁；如果锁已经被占据，本线程将排队等待，直到成功的获取锁。
++ `int pthread_mutex_trylock( pthread_mutex_t *mutex);` // 非阻塞加锁，该函数语义与 pthread_mutex_lock() 类似，不同的是在锁已经被占据时立即返回 EBUSY，不是挂起等待。
+
++ `int pthread_mutex_unlock(pthread_mutex *mutex);` // 释放锁
+
++ `int pthread_mutex_destroy(pthread_mutex *mutex);` // 销毁锁
+
+## 调用可执行程序
+### excl函数族
++ `int execl(const char *path, const char *arg, ...);`
++ + path：可执行程序完整路径
++ + arg：命令参数
++ + ...：具体内容，最后要有0
++ + 返回值：成功，不会返回，失败返回-1
++ + **注意：如果执行成功则函数不会返回，当在主程序中成功调用execl后，被调用的程序将取代调用者程序，也就是说，execl函数之后的代码都不会被执行。**
++ 如：`int iret=execl("/bin/ls","/bin/ls","-l","/usr/include/stdio.h",0);`
+
+### system函数
++ `int system(const char * string);`
++ + string：命令
++ + 返回值：成功返回shell的返回值，失败返回-1
++ + **注意它的实现其实是fork了一个子进程去执行excl，所以后面的代码还会执行**
+
+
+## 库文件
+
+### 静态库
++ 静态库在编译的时候，主程序文件与静态库一起编译，把主程序与主程序中用到的库函数一起整合进了目标文件。这样做优点是在编译后的可执行程序可以独立运行，并且执行速度快。缺点是，如果所使用的静态库发生更新改变，我们的程序必须重新编译，并且内存开销大。
+
+~~~bash
+ g++ -c -o libpublic.a public.cpp # 编译库
+ g++ -o main main.cpp -L<path> -lpublic  # 使用
+~~~
+
++ 静态库文件名的命名方式是“libxxx.a”,库名前加”lib”，后缀用”.a”，“xxx”为静态库名。
+</br>
+
+### 动态库
++ 动态库在编译时并不会被连接到目标代码中，而是在程序运行时才被载入，因此在程序运行时还需要指定动态库的目录。优点：内存占用小，修改库，程序不用重新编译。缺点：不同平台移植复杂，程序执行时间开销大。
+
++ 动态库的命名方式与静态库类似，前缀相同，为“lib”，后缀变为“.so” “xxx”为动态库名。
+
+~~~bash
+g++ -fPIC -shared -o libpublic.so public.cpp # 编译
+g++ -o main main.cpp -L<path> -lpublic  # 使用
+# Linux系统中采用LD_LIBRARY_PATH环境变量指定动态库文件的目录。
+export LD_LIBRARY_PATH=./lib 	# 如果有多个目录用`：`隔开
+~~~
+
+***使用时优先选用动态库***
 
 
 ## others
@@ -356,3 +417,4 @@ ps -xH
 + 4：安全模式
 + 5：图形界面
 + 6：重启
+
