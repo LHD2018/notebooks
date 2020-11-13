@@ -39,6 +39,15 @@ git pull 	//从远程获取合并到本地
 git branch --set-upstream-to <branch-name> origin/<branch-name>
 //建立本地分支和远程分支的链接关系
 
+## 如果想撤销某次commit
+# 回退到上一次提交之前
+git reset <commit_id> 	# <commit_id>可以使用git log获取
+# 重新add和commit后，再推送到github需要加`-f`参数
+git push -f
 
+# 如果提交后再添加`.gitignore`,而github上还在，先清除缓存再提交
+git rm -r --cached .
+# 重新add和commit后，再推送到github需要加`-f`参数
+git push -f
 
 ~~~
