@@ -1,3 +1,5 @@
+
+
 #前言
 
 +  ***之前学`c++`完全是学到哪算哪，从来没有系统性学过，现在重新开始。有些重点借此记录下来，希望能坚持下来，有所收获。***
@@ -189,7 +191,41 @@ struct Student{
 }s2;	// s2 是一个变量
 ~~~
 
+### 3.3 union联合体
++ 各成员共用一块内存空间，并且同时只有一个成员可以得到这块内存的使用权(对该内存的读写)，各变量共用一个内存首地址。一个union变量的总长度至少能容纳最大的成员变量，而且要满足是所有成员变量类型大小的整数倍
 
+~~~c ++
+// 联合体大小
+union U2
+{
+    char a;   
+    int b;
+    short c;
+    double d;
+    int e[5];
+}； // 大小为double（8字节）的整数倍，且要能装下e（20字节），故大小为24
+~~~
+~~~c ++
+// 大小端问题
+#include<stdio.h>
+ 
+//联合体
+union u3  
+{
+    char c[4];
+    int i;   
+}U4;
+ 
+//主函数
+int main(){ 
+    U4.C[0]=0X04;
+    U4.C[1]=0X03;
+    U4.C[2]=0X02;
+    U4.C[3]=0X11;
+    printf("%x\n",U4.i);	// 输出为11020304 小端
+    return 0;
+}
+~~~
 
 
 
@@ -670,6 +706,70 @@ my_thread.joinable();	// 线程是否可join或detach
 
 ~~~
 
-### 9.2 互斥量
+</br>
+#### 9.1.1 创建线程
++ 构造函数中传入函数名，如：`thread my_thread(pthFun);`
 
-+ 互斥量（mutex）：又称互斥锁，是一种用来保护临界区的特殊变量，有锁定（locked）和解锁（unlocked）两种状态。
++ `CreateThread()`和`_beginthreade()`函数
+~~~c ++
+// 以`CreateThread()`为例
+HANDLE WINAPI CreateThread(
+  LPSECURITY_ATTRIBUTES  lpThreadAttributes,  	// 安全属性，一般传NULL
+  SIZE_T                 dwStackSize,				// 线程栈空间大小，传0代表默认
+  LPTHREAD_START_ROUTINE lpStartAddress,	// 线程函数地址（函数名）
+  LPVOID                 lpParameter,				// 线程函数参数
+  DWORD                  dwCreationFlags,			// 控制线程创建，一般传0
+  LPDWORD                lpThreadId				// 返回线程id号，传NULL表示不需要返回
+);
+
+~~~
+***推荐使用`_beginthreade()`，因为`CreateThread()`在使用标准c运行库时可能不安全***
+</br>
+
+### 9.2 互斥量（windows）
+
+> 互斥量（mutex）：又称互斥锁，是一种用来保护临界区的特殊变量，有锁定（locked）和解锁（unlocked）两种状态。
+
+#### 9.2.1 创建互斥量
+~~~c ++
+HANDLE CreateMutex(
+  LPSECURITY_ATTRIBUTES lpMutexAttributes,	
+  bool bInitialOwner,     			
+  LPCTSTR lpName
+);
+~~~
++ 第一个参数：安全控制，一般是NULL
++ 第二个参数：确定互斥量的初始拥有者。如果传入TRUE表示互斥量对象内部会记录创建它的线程的线程ID号并将递归计数设置为1，由于该线程ID非零，所以互斥量处于未触发状态。如果传入FALSE，那么互斥量对象内部的线程ID号将设置为NULL，递归计数设置为0，这意味互斥量不为任何线程占用，处于触发状态。
++ 第三个参数：用来设置互斥量的名称，在多个进程中的线程就是通过名称来确保它们访问的是同一个互斥量。
++ 返回值：成功返回一个表示互斥量的句柄，失败返回NULL
+</br>
+
+#### 9.2.2 打开已经创建的互斥量(用于跨进程通信)
+~~~c ++
+// 某一个进程中的线程创建互斥量后，其它进程中的线程就可以通过这个函数来找到这个互斥量
+HANDLE OpenMutex(
+ DWORD dwDesiredAccess,
+ bool bInheritHandle,
+ LPCTSTR lpName    
+);
+~~~
++ 第一个参数：权限，一般传MUTEX_ALL_ACCESS
++ 第二个参数：互斥量句柄继承性，一般传入TRUE即可
++ 第三个参数：表示互斥量名称。
++ 返回值：成功返回一个表示互斥量的句柄，失败返回NULL
+
+</br>
+#### 9.2.3 等待互斥量触发
+	DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds);
++ 第一个参数：互斥量句柄
++ 第二个参数：时间间隔
++ 返回值：WAIT_FAILED（函数失败 ）WAIT_OBJECT_0 （指定的同步对象处于有信号的状态 ）WAIT_ABANDONED （拥有一个mutex的线程已经中断了，但未释放该MUTEX）WAIT_TIMEOUT （ 超时返回，并且同步对象无信号 ）
+
+</br>
+#### 9.2.4 解锁互斥量
+	bool ReleaseMutex(HANDLE hMutex)
+
+</br>
+#### 9.2.5 释放互斥量（内核对象）
+	CloseHandle(HANDLE hMutex) 
+

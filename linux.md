@@ -4,20 +4,42 @@
 ~~~bash
 uname -r 	# 查看当前内核
 
-dpkg -l | grep linux-image		# 列出当前所有内核
+# 列出当前所有内核
+dpkg -l | grep linux-image		# Debian系
+rpm -qa kernel					# Redhat系
 
-sudo apt-get purge --remove linux-image-x.x.0-xx-generic # 删除内核
-
+# 删除内核
+sudo apt-get purge --remove linux-image-x.x.0-xx-generic # Debian系
+dnf remove kernel-*****									# Redhat系
+# 安装dnf
+yum install epel-release
+yum install dnf
 ~~~
 
 ### 1.1 安装内核
 
+#### Debian系
 + 去[ubuntu仓库](https://kernel.ubuntu.com/~kernel-ppa/mainline/)下载合适的内核，包括4个.deb文件，如图所示：
 ![](https://i.loli.net/2020/08/30/kz7MUWolSegmvFH.png)
 
 ~~~bash
 //进入下载目录执行下面命令
 sudo dpkg -i *.deb
+~~~
+### Redhat系
+~~~bash
+# 导入公钥
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+# 安装Elrepo7
+rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+# 安装内核
+yum --enablerepo=elrepo-kernel install kernel-ml -y
+# 修复grub
+egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
+# 设置内核启动
+grub2-set-default 0
+# 重启
+reboot
 ~~~
 
 
