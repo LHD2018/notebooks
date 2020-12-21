@@ -91,7 +91,7 @@ declare [-aixr] name 	# 声明变量，a：数组，i：整形，x：环境变�
 + `fork()`函数用来产生一个新的进程，在父进程中返回子线程id，在子线程中返回0
 
 ### 3.2 进程常用命令
-+ `pf -ef` 列出所有进程
++ `ps -ef` 列出所有进程
 + `ps -aL` 查看当前运行的轻量级进程
 + 命令后加`&`变成守护进程，使其后台运行
 + `killall <name>` 杀死进程
@@ -348,7 +348,7 @@ pstree -p <主线程id>
 #### 4.4.1 互斥锁
 + `int pthread_mutex_init(pthread_mutex_t *mutex,const pthread_mutex_attr_t *mutexattr);` // 初始化锁
 + + mutex:锁标识符
-+ +mutexattr：锁属性，null为缺省值，**一般就填0**
++ + mutexattr：锁属性，null为缺省值，**一般就填0**
 + + + PTHREAD_MUTEX_TIMED_NP：普通锁，缺省值。
 + + + PTHREAD_MUTEX_RECURSIVE_NP，嵌套锁，允许同一个线程对同一个锁成功获得多次，并通过多次unlock解锁。
 + + + PTHREAD_MUTEX_ERRORCHECK_NP，检错锁，如果同一个线程请求同一个锁，则返回EDEADLK，否则与PTHREAD_MUTEX_TIMED_NP类型动作相同。
