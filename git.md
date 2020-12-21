@@ -50,4 +50,10 @@ git rm -r --cached .
 # 重新add和commit后，再推送到github需要加`-f`参数
 git push -f
 
+
+# 如果本地和远程出现冲突（Please, commit your changes or stash them before you can merge.
+）
+git stash	# 将本地修改存入缓存并恢复一次提交
+git pull	# 远程拉取
+git stash pop	# 恢复缓存内容
 ~~~
