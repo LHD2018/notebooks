@@ -19,12 +19,37 @@
 
 </br>
 
-## 2. CMake命令参数
+## 2. CMake安装
++ windows直接去[官网](https://cmake.org/download/)下载安装
++ Linux以centos为例，分为直接安装和源码安装
+~~~bash
+# 1.直接安装（不是最新版的cmake）
+yum install -y cmake
+
+# 2.源码安装
+yum install -y gcc gcc-c++ make automake wget 		# 安装需要的软件
+
+wget https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2.tar.gz # 下载源码（有代理走代理）
+
+tar -zxvf cmake-3.19.2.tar.gz		# 解压缩
+
+cd cmake-3.19.2
+./bootstrap
+gmake	# 编译（可以加-j参数使用多线程编译）
+
+sudo gmake install # 安装
+
+#安装完成后查看版本，如出现版本号则安装成功
+cmake --version
+~~~
+</br>
+
+## 3. CMake命令参数
 
 + `-G <generator_name>`：指定编译器名称，如`-G "MinGW Makefiles"`，对大小写敏感，而且编译器已设置到环境变量中。**一般不用**
 + `-D<var>:<type>=<value>`:添加变量及值到CMakeList.txt中。**注意-D后面不能有空格**，type为string时可省略。例如：cmake -DCMAKE_BUILD_TYPE~~:STRING~~=Debug
 
-## 3. CMakeLists.txt编写
+## 4. CMakeLists.txt编写
 
 ***CMakeLists.txt是CMake项目的核心***
 ~~~bash

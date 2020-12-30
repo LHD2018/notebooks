@@ -337,15 +337,20 @@ bool CSEM::post()
 + 在同一个进程中，可以运行多个线程，运行于同一个进程中的多个线程，它们彼此之间使用相同的地址空间，共享全局变量和对象，启动一个线程所消耗的资源比启动一个进程所消耗的资源要少。
 
 ~~~bash
+
 # 查看线程
 top -H
 ps -xH
 # 查看主线程和子线程关系
 pstree -p <主线程id>
+
+# Linux上需要安装pthread库,然后导入pthread头文件使用
+sudo apt-get install glibc-doc
+sudo apt-get install manpages-posix-dev
 ~~~
 
-
 ### 4.1 线程创建
+
 + `int pthread_create(pthread_t *thread, const pthread_attr_t *attr,void *(*start_routine) (void *), void *arg);` 创建线程
 + + thread：指向线程标识符的地址
 + + attr：线程属性，一般为NULL
