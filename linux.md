@@ -19,7 +19,7 @@ yum install dnf
 ### 1.1 安装内核
 
 #### Debian系
-+ 去[ubuntu仓库](https://kernel.ubuntu.com/~kernel-ppa/mainline/)下载合适的内核，包括4个.deb文件，如图所示：
++ 去[ubuntu仓库]( )下载合适的内核，包括4个.deb文件，如图所示：
 ![](https://i.loli.net/2020/08/30/kz7MUWolSegmvFH.png)
 
 ~~~bash
