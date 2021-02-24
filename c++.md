@@ -531,7 +531,7 @@ data.sort();		//自定义数据类型排序需要指定规则
 ~~~
 
 
-#### 8.3.7 set和multiset 容器
+#### 8.3.7 set容器
 
 + 常用函数
 ~~~c++
@@ -547,16 +547,16 @@ data.find(elem);	//查找，若存在返回元素迭代器
 data.count(elem);	// 统计元素个数
 ~~~
 
-+ set和multiset 的异同点
->   二者在插入时都会进行排序，所有函数相同
->   set不能插入重复元素，multiset可以插入重复元素
++ unordered_set、set和multiset 的异同点
+>   set和multiset在插入时都会进行排序，而unordered_set不会排序，所有函数相同
+>   set和unordered_set不能插入重复元素，multiset可以插入重复元素
 
-#### 8.3.8 map和multimap 容器
+#### 8.3.8 map容器
 
 + map中所有元素都是pair
 + pair由键值对组成
-+ 所有元素会根据键自动排序
-+ map不能插入重复元素，multimap 可以
++ map和multimap元素会根据键自动排序,而unordered_map不会
++ unordered_map,map不能插入重复元素，multimap 可以
 
 + 常用函数
 ~~~c++
