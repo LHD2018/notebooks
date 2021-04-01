@@ -452,6 +452,46 @@ export LD_LIBRARY_PATH=./lib 	# 如果有多个目录用`：`隔开
 |quit|q|退出gdb|
 
 </br>
+* 断点调试
+~~~ bash
+# 查看断点信息
+info breakpoints
+
+# 在行号9处设置断点
+b 9
+b test.c:9
+
+# 在函数func处设置断点
+b func
+
+# 条件断点
+b test.c:9 if b==0
+
+# 临时断点
+tbreak 9
+
+# 跳过1号断点30次
+ignore 1 30
+
+# 观察某个变量的变化
+watch a
+
+# 禁用断点
+disable # 禁用所有
+disable num # 禁用num号断点
+
+# 启用断点
+enable # 启用所有
+enable num # 启用num号断点
+
+# 清楚断点
+clear # 清除所有
+delete num # 清除num号断点
+
+~~~
+</br>
+
+
 ### 7.1 gdb多进程调试
 ~~~bash
 # 调试父进程(default)
@@ -484,7 +524,15 @@ thread apply <线程id> [cmd]
 # 全部线程执行某命令
 thread apply all [cmd]
 ~~~
+</br>
 
+### 7.3 gdb 调试已运行程序
+~~~ bash
+ps # 找到进程id
+attach id
+~~~
+
+</br>
 
 ## others
 + `tail -f <filename>` 实时查看文件

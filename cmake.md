@@ -27,7 +27,7 @@
 yum install -y cmake
 
 # 2.源码安装
-yum install -y gcc gcc-c++ make automake wget 		# 安装需要的软件
+yum install -y gcc gcc-c++ make automake wget  		# 安装需要的软件
 
 wget https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2.tar.gz # 下载源码（有代理走代理）
 
@@ -35,9 +35,9 @@ tar -zxvf cmake-3.19.2.tar.gz		# 解压缩
 
 cd cmake-3.19.2
 ./bootstrap
-gmake	# 编译（可以加-j参数使用多线程编译）
+make	# 编译（可以加-j参数使用多线程编译）
 
-sudo gmake install # 安装
+sudo make install # 安装
 
 #安装完成后查看版本，如出现版本号则安装成功
 cmake --version
