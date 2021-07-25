@@ -64,6 +64,26 @@
 - false
 
 
+#### 1.3.6 类型转换
+
++ c语言风格
+~~~ c
+double a= 12.4;
+int b = (int)a;
+int c = int(a + 1);
+~~~
++ c++
++ `reinterpret_cast`, `static_cast`, `dynamic_cast`和`const_cast`
++ 用法：cast_name<type_name>(expression)  
+
+|类型|特点|
+|---|---|
+|const_cast|将const变量转成非const变量|
+|dynamic_cast|具有运行时安全检查，防止扩大指针范围|
+|static_cast|将非const变量转const变量，无安全检查|
+|reinterpret_cast|简单的二进制数据拷贝|
+
+
 
 ### 1.4 运算符
 | 运算符 | 术语 | 示例 | 结果 |
@@ -374,7 +394,6 @@ const Student s;
 > 多态好处：
 > + 代码可读性强
 > + 扩展性强
-> 
 
 #### 6.3.1 纯虚函数与抽象类
 + `virtual void 函数名（参数） = 0` 
@@ -424,7 +443,6 @@ template<typename T>
 > + 通过空模板函数列表强制调用模板函数
 > + 函数模板可以重载
 > + 如果函数模板可以产生更好的匹配,那么调用函数模板
-> 
 
 #### 8.1.2 类模板
 ~~~c++
@@ -450,7 +468,6 @@ public:
 > > 迭代器
 > > + 双向迭代器:读写操作,并能向前向后操作
 > > + 随机访问迭代器:读写操作,可以跳跃式访问任何数据
-> > 
 
 
 ### 8.3 容器
