@@ -3,13 +3,17 @@
 
 
 
+> git 分为工作区（work）、缓存区（index），和仓库区（repository）
+
+
+
 ## GIT使用
 ~~~bash
 git init	//创建仓库
 
-git add -A	//添加所有变化
+git add -A	//添加所有变化到缓存区
 
-git commit -m "message"		//提交，其中message是说明
+git commit -m "message"		//提交，其中message是说明，提交到仓库
 
 git status 		//查看仓库状态
 
@@ -39,9 +43,19 @@ git pull 	//从远程获取合并到本地
 git branch --set-upstream-to <branch-name> origin/<branch-name>
 //建立本地分支和远程分支的链接关系
 
-## 如果想撤销某次commit
+git checkout # 拉取缓存替换工作区文件 可加`--<file_name>`指定文件或使用.表示所有文件
+
+## 如果想撤销某次commit(reset 分为soft和hard，默认为soft)
 # 回退到上一次提交之前
+git reset HEAD^ #从最近一次提交拉取文件覆盖缓存区，工作区不变，可加`--<file_name>`指定文件
+
+git reset --hard HEAD^ #从最近一次提交拉取文件覆盖缓存区和工作区，代码文件全部变成上一次提交的文件，可加`--<file_name>`指定文件
+
+# 回退到任意一次提交
 git reset <commit_id> 	# <commit_id>可以使用git log获取
+
+
+
 # 重新add和commit后，再推送到github需要加`-f`参数
 git push -f
 
