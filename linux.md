@@ -129,11 +129,11 @@ declare [-aixr] name 	# 声明变量，a：数组，i：整形，x：环境变�
 + 信号量（semaphore）：进程之间对共享资源加锁
 + 套接字（socket）：可用于不同计算机进程
 
-### 3.3.0 管道
+#### 3.3.1 管道
 + 匿名管道：`int pipe(int fd[2])`,fd是一个二元数组，用于存放pipe函数所创建管道的两个文件描述符，fd[0]存放管道读取端的文件描述符，fd[1]用于存放管道写入端的文件描述符。通常，进程pipe()创建管道后，再fork一个子进程，调用exec函数族使子进程执行所需程序，然后通过管道实现父子进程间的通信。通信方式：父进程关闭管道读端，子进程关闭管道写端。父进程可以向管道中写入数据，子进程将管道中的数据读出。
 + 有名管道：`int mkfifo(const char * pathname, mode_t mode)`,该函数的第一个参数是一个普通的路径名，也就是创建后FIFO的名字。第二个参数与打开普通文件的open()函数中的mode 参数相同。如果名字重复，会返回EXIST错误， 一般文件的I/O函数都可以用于FIFO，如close、read、write等等。
 
-#### 3.3.1 信号
+#### 3.3.2信号
 + `signal(int signum, sighandler_t handler);`
 + + signum:信号编号 
 + + handler:处理方式，可以是自定义信号处理函数，或忽略`SIG_IGN`, 或默认`SIG_DFL`
@@ -172,7 +172,7 @@ int main()
 + + 返回值：成功返回0， 失败返回-1
 </br>
 
-#### 3.3.2共享内存
+#### 3.3.3共享内存
 + 共享内存（Shared Memory）就是允许多个进程访问同一个内存空间，是在多个进程之间共享和传递数据最高效的方式。
 
 + `int shmget(key_t key, size_t size, int shmflg);`获取或创建共享内存
@@ -236,7 +236,7 @@ int main(){
 ~~~
 </br>
 
-#### 3.3.3 信号量
+#### 3.3.4 信号量
 
 + 信号量（信号灯）本质上是一个计数器，用于协调多个进程（包括但不限于父子进程）对共享数据对象的读/写。
 
@@ -386,13 +386,20 @@ sudo apt-get install manpages-posix-dev
 + + + PTHREAD_MUTEX_RECURSIVE_NP，嵌套锁，允许同一个线程对同一个锁成功获得多次，并通过多次unlock解锁。
 + + + PTHREAD_MUTEX_ERRORCHECK_NP，检错锁，如果同一个线程请求同一个锁，则返回EDEADLK，否则与PTHREAD_MUTEX_TIMED_NP类型动作相同。
 + + + PTHREAD_MUTEX_ADAPTIVE_NP，适应锁，动作最简单的锁类型，等待解锁后重新竞争。
-
 + `int pthread_mutex_lock(pthread_mutex *mutex);` // 阻塞加锁，如果是锁是空闲状态，本线程将获得这个锁；如果锁已经被占据，本线程将排队等待，直到成功的获取锁。
 + `int pthread_mutex_trylock( pthread_mutex_t *mutex);` // 非阻塞加锁，该函数语义与 pthread_mutex_lock() 类似，不同的是在锁已经被占据时立即返回 EBUSY，不是挂起等待。
-
 + `int pthread_mutex_unlock(pthread_mutex *mutex);` // 释放锁
-
 + `int pthread_mutex_destroy(pthread_mutex *mutex);` // 销毁锁
+
+#### 4.4.2 条件锁
++ 某一个线程因为某个条件未满足时可以使用条件变量使该程序处于阻塞状态。一旦条件满足了，即可唤醒该线程(常和互斥锁配合使用)，唤醒后，需要检查变量，避免虚假唤醒。
++ `wait_for`、`notify_one`
+
+#### 4.4.3 自旋锁
++ 与互斥锁的相比，在获取锁失败的时候不会使得线程阻塞而是一直自旋尝试获取锁。当线程等待自旋锁的时候，CPU不能做其他事情，而是一直处于轮询忙等的状态。
+
+#### 4.4.4 递归锁
++ 可以多次lock和unlock，lock了多少次就必须unlock多少才能释放
 
 ## 5. 调用可执行程序
 ### 5.1 excl函数族
